@@ -50,9 +50,9 @@ class Playfair:
         return self.__grid[coords[0]][coords[1]]
 
     def __get_new_indices(
-        self, index1: tuple[int, int], index2: tuple[int, int], encode: bool = True
+        self, index1: tuple[int, int], index2: tuple[int, int], decode: bool = False
     ) -> tuple[tuple[int, int]]:
-        delta = 1 if encode else -1
+        delta = -1 if decode else 1
 
         # same row
         if index1[0] == index2[0]:
@@ -141,7 +141,7 @@ class Playfair:
                 out.append(pair)
                 continue
 
-            new_indices = self.__get_new_indices(*indices, encode=False)
+            new_indices = self.__get_new_indices(*indices, decode=True)
             new_chars = tuple(map(self.__get_char, new_indices))
             
             out.append(pair.translate(dict(zip(map(ord, alnum), map(ord, new_chars)))))
