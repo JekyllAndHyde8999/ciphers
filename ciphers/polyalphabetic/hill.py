@@ -112,9 +112,6 @@ class Hill:
         message = list(message)
         while message:
             curr_char = message.pop(0)
-            if wo_duplicates and curr_char.isalnum() and curr_char == wo_duplicates[-1]:
-                wo_duplicates.append("X")
-
             wo_duplicates.append(curr_char)
 
         message = "".join(wo_duplicates)
@@ -174,7 +171,11 @@ class Hill:
 
         for group in message_parts:
             new_group = ""
-            encoded_group = self.__encode_group(group)
+            encoded_group = (
+                self.__encode_group(group)
+                if any(map(lambda x: x.isalnum(), group))
+                else group
+            )
             for char in group:
                 if char.isalnum():
                     new_group += encoded_group.pop(0)
@@ -209,7 +210,11 @@ class Hill:
 
         for group in message_parts:
             new_group = ""
-            encoded_group = self.__decode_group(group)
+            encoded_group = (
+                self.__decode_group(group)
+                if any(map(lambda x: x.isalnum(), group))
+                else group
+            )
             for char in group:
                 if char.isalnum():
                     new_group += encoded_group.pop(0)
