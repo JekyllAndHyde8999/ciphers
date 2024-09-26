@@ -1,7 +1,8 @@
+import math
 import string
 
 
-class Matrix:
+class ModMatrix:
     def __init__(self, a: list) -> None:
         self.matrix = a
 
@@ -19,13 +20,61 @@ class Matrix:
                 for k in range(len(other.matrix)):
                     product[i][j] += self.matrix[i][k] * other.matrix[k][j]
 
-        return Matrix(product)
+        return ModMatrix(product)
 
     def __mod__(self, other):
-        return Matrix([[ele % other for ele in row] for row in self.matrix])
+        return ModMatrix([[ele % other for ele in row] for row in self.matrix])
 
     def flatten(self):
-        return Matrix([ele for row in self.matrix for ele in row])
+        return ModMatrix([ele for row in self.matrix for ele in row])
+
+    def __get_matrix_minor(self, matrix, i, j):
+        return [row[:j] + row[j + 1 :] for row in (matrix[:i] + matrix[i + 1 :])]
+
+    def __get_determinant(self, matrix):
+        if len(matrix) == 2:
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+        determinant = 0
+        for c in range(len(matrix)):
+            determinant += (
+                ((-1) ** c)
+                * matrix[0][c]
+                * self.__get_determinant(self.__get_matrix_minor(matrix, 0, c))
+            )
+        return determinant
+
+    def invert(self):
+        """Function to calculate the inverse of a matrix"""
+        determinant = self.__get_determinant(self.matrix)
+        if determinant == 0:
+            raise ValueError("The matrix is not invertible")
+
+        # Special case for 2x2 matrix:
+        if len(self.matrix) == 2:
+            return [
+                [self.matrix[1][1] / determinant, -1 * self.matrix[0][1] / determinant],
+                [-1 * self.matrix[1][0] / determinant, self.matrix[0][0] / determinant],
+            ]
+
+        # Find matrix of cofactors
+        cofactors = []
+        for r in range(len(self.matrix)):
+            cofactor_row = []
+            for c in range(len(self.matrix)):
+                minor = self.__get_matrix_minor(self.matrix, r, c)
+                cofactor_row.append(((-1) ** (r + c)) * self.__get_determinant(minor))
+            cofactors.append(cofactor_row)
+
+        # Transpose matrix of cofactors
+        cofactors = list(map(list, zip(*cofactors)))
+
+        # Divide each element by the determinant
+        for r in range(len(cofactors)):
+            for c in range(len(cofactors)):
+                cofactors[r][c] = cofactors[r][c] / determinant
+
+        return ModMatrix(cofactors)
 
 
 class Hill:
@@ -33,12 +82,13 @@ class Hill:
         self.__letters = string.ascii_letters + string.digits
         self.__key = list(map(self.__letters.find, key))
         self.__key_shape = int(len(self.__key) ** 0.5)
-        self.__key = Matrix(
+        self.__key = ModMatrix(
             [
                 self.__key[i * self.__key_shape : (i + 1) * self.__key_shape]
                 for i in range(self.__key_shape)
             ]
         )
+        self.__inverted_key = self.__key.invert() % len(self.__letters)
 
         print(*self.__key.matrix, sep="\n")
 
@@ -65,11 +115,22 @@ class Hill:
         return message
 
     def __encode_group(self, group: str) -> str:
-        vector = Matrix(
+        vector = ModMatrix(
             [[self.__letters.find(char)] for char in group if char in self.__letters]
         )
         new_letters = ((self.__key @ vector) % len(self.__letters)).flatten().matrix
         new_letters = [self.__letters[ind] for ind in new_letters]
+        return new_letters
+
+    def __decode_group(self, group: str) -> str:
+        vector = ModMatrix(
+            [[self.__letters.find(char)] for char in group if char in self.__letters]
+        )
+        new_letters = (
+            ((self.__inverted_key @ vector) % len(self.__letters)).flatten().matrix
+        )
+        print(f"{list(map(math.floor, new_letters))=}")
+        new_letters = [self.__letters[math.floor(ind)] for ind in new_letters]
         return new_letters
 
     def encode(self, message: str) -> str:
@@ -109,4 +170,36 @@ class Hill:
         return "".join(out)
 
     def decode(self, message: str) -> str:
-        pass
+        message_parts = []
+        out = []
+
+        # take `key` alphanum chars at a time and find indices
+        count = 0
+        part = ""
+        while message:
+            curr_char = message[0]
+            part += curr_char
+            if curr_char in self.__letters:
+                count += 1
+
+            if count == self.__key_shape:
+                message_parts.append(part)
+                count = 0
+                part = ""
+
+            message = message[1:]
+
+        if part:
+            message_parts.append(part)
+
+        for group in message_parts:
+            new_group = ""
+            encoded_group = self.__decode_group(group)
+            for char in group:
+                if char.isalnum():
+                    new_group += encoded_group.pop(0)
+                else:
+                    new_group += char
+            out.append(new_group)
+
+        return "".join(out)
