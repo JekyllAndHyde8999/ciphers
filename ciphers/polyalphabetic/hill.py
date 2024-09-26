@@ -2,9 +2,14 @@ import math
 import string
 
 
+class InvalidDeterminant(ValueError):
+    pass
+
+
 class ModMatrix:
-    def __init__(self, a: list) -> None:
+    def __init__(self, a: list, modulus: int) -> None:
         self.matrix = a
+        self.modulus = modulus
 
     def __matmul__(self, other):
         assert isinstance(other, self.__class__)
@@ -20,18 +25,28 @@ class ModMatrix:
                 for k in range(len(other.matrix)):
                     product[i][j] += self.matrix[i][k] * other.matrix[k][j]
 
-        return ModMatrix(product)
+        return ModMatrix(product, self.modulus)
+
+    def __rmul__(self, other):
+        return ModMatrix(
+            [[ele * other for ele in row] for row in self.matrix], self.modulus
+        )
 
     def __mod__(self, other):
-        return ModMatrix([[ele % other for ele in row] for row in self.matrix])
+        return ModMatrix(
+            [[ele % other for ele in row] for row in self.matrix], self.modulus
+        )
 
     def flatten(self):
-        return ModMatrix([ele for row in self.matrix for ele in row])
+        return ModMatrix([ele for row in self.matrix for ele in row], self.modulus)
 
     def __get_matrix_minor(self, matrix, i, j):
         return [row[:j] + row[j + 1 :] for row in (matrix[:i] + matrix[i + 1 :])]
 
     def __get_determinant(self, matrix):
+        if len(matrix) == 1:
+            return matrix[0][0]
+
         if len(matrix) == 2:
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
 
@@ -44,18 +59,32 @@ class ModMatrix:
             )
         return determinant
 
+    def __invert_det(self, det):
+        if det == 0:
+            raise InvalidDeterminant("Determinant of matrix is 0.")
+
+        det %= self.modulus
+
+        if math.gcd(det, self.modulus) != 1:
+            raise InvalidDeterminant(
+                f"Determinant {det} is not co-prime with modulus {self.modulus}"
+            )
+
+        for i in range(1, self.modulus):
+            if (det * i) % self.modulus == 1:
+                return i
+
     def invert(self):
         """Function to calculate the inverse of a matrix"""
-        determinant = self.__get_determinant(self.matrix)
-        if determinant == 0:
-            raise ValueError("The matrix is not invertible")
+        inverse_determinant = self.__invert_det(self.__get_determinant(self.matrix))
+        print(f"{inverse_determinant=}")
 
         # Special case for 2x2 matrix:
-        if len(self.matrix) == 2:
-            return [
-                [self.matrix[1][1] / determinant, -1 * self.matrix[0][1] / determinant],
-                [-1 * self.matrix[1][0] / determinant, self.matrix[0][0] / determinant],
-            ]
+        # if len(self.matrix) == 2:
+        #     return [
+        #         [self.matrix[1][1] / determinant, -1 * self.matrix[0][1] / determinant],
+        #         [-1 * self.matrix[1][0] / determinant, self.matrix[0][0] / determinant],
+        #     ]
 
         # Find matrix of cofactors
         cofactors = []
@@ -69,12 +98,7 @@ class ModMatrix:
         # Transpose matrix of cofactors
         cofactors = list(map(list, zip(*cofactors)))
 
-        # Divide each element by the determinant
-        for r in range(len(cofactors)):
-            for c in range(len(cofactors)):
-                cofactors[r][c] = cofactors[r][c] / determinant
-
-        return ModMatrix(cofactors)
+        return (inverse_determinant * ModMatrix(cofactors, self.modulus)) % self.modulus
 
 
 class Hill:
@@ -86,11 +110,16 @@ class Hill:
             [
                 self.__key[i * self.__key_shape : (i + 1) * self.__key_shape]
                 for i in range(self.__key_shape)
-            ]
+            ],
+            len(self.__letters),
         )
+        print(*self.__key.matrix, sep="\n")
         self.__inverted_key = self.__key.invert() % len(self.__letters)
 
-        print(*self.__key.matrix, sep="\n")
+        print(
+            *(((self.__key @ self.__inverted_key) % len(self.__letters)).matrix),
+            sep="\n",
+        )
 
     def __preprocess(self, message: str) -> str:
         # insert X between duplicate letters
@@ -116,7 +145,8 @@ class Hill:
 
     def __encode_group(self, group: str) -> str:
         vector = ModMatrix(
-            [[self.__letters.find(char)] for char in group if char in self.__letters]
+            [[self.__letters.find(char)] for char in group if char in self.__letters],
+            len(self.__letters),
         )
         new_letters = ((self.__key @ vector) % len(self.__letters)).flatten().matrix
         new_letters = [self.__letters[ind] for ind in new_letters]
@@ -124,7 +154,8 @@ class Hill:
 
     def __decode_group(self, group: str) -> str:
         vector = ModMatrix(
-            [[self.__letters.find(char)] for char in group if char in self.__letters]
+            [[self.__letters.find(char)] for char in group if char in self.__letters],
+            len(self.__letters),
         )
         new_letters = (
             ((self.__inverted_key @ vector) % len(self.__letters)).flatten().matrix
