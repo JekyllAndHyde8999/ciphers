@@ -13,9 +13,7 @@ class ModMatrix:
 
     def __matmul__(self, other):
         assert isinstance(other, self.__class__)
-        # assert self.shape[1] == other.shape[0], "dim1({0}) != dim0({1})".format(
-        #     self.shape[1], other.shape[0]
-        # )  # checking dimensions
+
         product = [
             [0 for i in range(len(other.matrix[0]))] for j in range(len(self.matrix))
         ]
@@ -77,14 +75,6 @@ class ModMatrix:
     def invert(self):
         """Function to calculate the inverse of a matrix"""
         inverse_determinant = self.__invert_det(self.__get_determinant(self.matrix))
-        print(f"{inverse_determinant=}")
-
-        # Special case for 2x2 matrix:
-        # if len(self.matrix) == 2:
-        #     return [
-        #         [self.matrix[1][1] / determinant, -1 * self.matrix[0][1] / determinant],
-        #         [-1 * self.matrix[1][0] / determinant, self.matrix[0][0] / determinant],
-        #     ]
 
         # Find matrix of cofactors
         cofactors = []
@@ -113,13 +103,8 @@ class Hill:
             ],
             len(self.__letters),
         )
-        print(*self.__key.matrix, sep="\n")
-        self.__inverted_key = self.__key.invert() % len(self.__letters)
 
-        print(
-            *(((self.__key @ self.__inverted_key) % len(self.__letters)).matrix),
-            sep="\n",
-        )
+        self.__inverted_key = self.__key.invert()
 
     def __preprocess(self, message: str) -> str:
         # insert X between duplicate letters
@@ -160,8 +145,7 @@ class Hill:
         new_letters = (
             ((self.__inverted_key @ vector) % len(self.__letters)).flatten().matrix
         )
-        print(f"{list(map(math.floor, new_letters))=}")
-        new_letters = [self.__letters[math.floor(ind)] for ind in new_letters]
+        new_letters = [self.__letters[ind] for ind in new_letters]
         return new_letters
 
     def encode(self, message: str) -> str:
