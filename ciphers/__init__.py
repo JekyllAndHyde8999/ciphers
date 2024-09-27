@@ -1,4 +1,4 @@
-from .monoalphabetic import Caesar, Vatsyayana
+from .monoalphabetic import Affine, Caesar, Vatsyayana
 from .polyalphabetic import Hill, Playfair
 
-__all__ = ["Caesar", "Hill", "Playfair", "Vatsyayana"]
+__all__ = ["Affine", "Caesar", "Hill", "Playfair", "Vatsyayana"]
