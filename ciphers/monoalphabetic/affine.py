@@ -18,11 +18,9 @@ class Affine:
             )
 
         for i in range(1, len(self.__letters)):
-            print(f"{self.a * i=}; {(self.a * i) % len(self.__letters)}")
             if (self.a * i) % len(self.__letters) == 1:
                 self.a_inv = i
                 break
-        print(f"{self.a_inv=}")
 
     def encode(self, message: str) -> str:
         out = ""

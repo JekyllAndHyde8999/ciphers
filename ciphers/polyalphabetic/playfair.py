@@ -95,8 +95,6 @@ class Playfair:
         if part:
             message_parts.append(part)
 
-        print(message_parts)
-
         for pair in message_parts:
             alnum = tuple(filter(lambda x: x.isalnum(), pair))
             indices = tuple(map(self.__find_char, alnum))
@@ -106,11 +104,11 @@ class Playfair:
 
             new_indices = self.__get_new_indices(*indices)
             new_chars = tuple(map(self.__get_char, new_indices))
-            
+
             out.append(pair.translate(dict(zip(map(ord, alnum), map(ord, new_chars)))))
-        
+
         return "".join(out)
-    
+
     def decode(self, message: str) -> str:
         message_parts = []
         out = []
@@ -143,7 +141,7 @@ class Playfair:
 
             new_indices = self.__get_new_indices(*indices, decode=True)
             new_chars = tuple(map(self.__get_char, new_indices))
-            
+
             out.append(pair.translate(dict(zip(map(ord, alnum), map(ord, new_chars)))))
-        
+
         return "".join(out)
