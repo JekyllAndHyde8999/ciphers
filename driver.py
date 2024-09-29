@@ -1,7 +1,7 @@
 import random
 import string
 
-from ciphers import Caesar, Hill, Playfair, Vatsyayana, Affine
+from ciphers import Affine, Caesar, Hill, Playfair, Vatsyayana, Vigenere
 
 all_chars = string.ascii_letters + string.digits
 TOTAL_LENGTH = 100
@@ -9,7 +9,7 @@ message_len = lambda message: sum([char.isalnum() for char in message])
 
 
 def print_message(text, cipher):
-    print("Encoded message:", encoded := cipher.encode(message))
+    print("Encoded message:", encoded := cipher.encode(text))
     print("Decoded message:", cipher.decode(encoded))
 
 
@@ -59,3 +59,8 @@ print(f"\n{' Hill ':#^{TOTAL_LENGTH}}\n")
 key = "DFCH"
 hill = Hill(key)
 print_message(message, hill)
+
+print(f"\n{' Vigenere ':#^{TOTAL_LENGTH}}\n")
+key = "ciphers"
+vigenere = Vigenere(key)
+print_message(message, vigenere)
