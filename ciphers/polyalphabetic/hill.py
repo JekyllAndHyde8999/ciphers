@@ -18,15 +18,6 @@ class Hill(Cipher):
         self.__inverted_key = self.__key.invert()
 
     def __preprocess(self, message: str) -> str:
-        # insert X between duplicate letters
-        wo_duplicates = []
-        message = list(message)
-        while message:
-            curr_char = message.pop(0)
-            wo_duplicates.append(curr_char)
-
-        message = "".join(wo_duplicates)
-
         # count number of alphanum characters
         num_alphanum = sum([char.isalnum() for char in message])
         # add X to the end to align it to the key
