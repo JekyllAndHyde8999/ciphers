@@ -1,7 +1,7 @@
 import random
 import string
 
-from ciphers import Affine, Caesar, Hill, Playfair, Vatsyayana, Vigenere
+from ciphers import Affine, Caesar, Hill, Playfair, RailFence, Vatsyayana, Vigenere
 
 all_chars = string.ascii_letters + string.digits
 TOTAL_LENGTH = 100
@@ -51,6 +51,10 @@ print_message(message, vatsyayana)
 print(f"\n{' Affine ':#^{TOTAL_LENGTH}}\n")
 affine = Affine(9, 3)
 print_message(message, affine)
+
+print(f"\n{' RailFence ':#^{TOTAL_LENGTH}}\n")
+railfence = RailFence(2)
+print_message(message, railfence)
 
 print(f"\n{' Polyalphabetic Ciphers ':#^{TOTAL_LENGTH}}")
 print(f"{' Playfair ':#^{TOTAL_LENGTH}}\n")
