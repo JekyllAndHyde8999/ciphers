@@ -5,7 +5,10 @@ from ciphers import Affine, Caesar, Hill, Playfair, Vatsyayana, Vigenere
 
 all_chars = string.ascii_letters + string.digits
 TOTAL_LENGTH = 100
-message_len = lambda message: sum([char.isalnum() for char in message])
+
+
+def message_len(message):
+    return sum([char.isalnum() for char in message])
 
 
 def print_message(text, cipher):

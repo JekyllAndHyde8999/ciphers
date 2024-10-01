@@ -1,10 +1,7 @@
 import math
 
 from ..base import Cipher
-
-
-class InvalidParameter(ValueError):
-    pass
+from ..exceptions import InvalidParameter
 
 
 class Affine(Cipher):
