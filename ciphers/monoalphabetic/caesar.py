@@ -1,24 +1,19 @@
-import string
+from ..base import Cipher
 
 
-class Caesar:
+class Caesar(Cipher):
     def __init__(self, shift: int):
         self.shift = shift
-        self.__letters = string.ascii_letters + string.digits
-
-    def preprocess(self, message: str) -> str:
-        message = message.replace(" ", "")
-        message = message.translate(str.maketrans("", "", string.punctuation))
-        return message
+        super().__init__()
 
     def encode(self, message: str) -> str:
         out = "".join(
             [
                 (
-                    self.__letters[
-                        (self.__letters.find(char) + self.shift) % len(self.__letters)
+                    self.letters[
+                        (self.letters.find(char) + self.shift) % len(self.letters)
                     ]
-                    if char in self.__letters
+                    if char in self.letters
                     else char
                 )
                 for char in message
@@ -31,10 +26,10 @@ class Caesar:
         out = "".join(
             [
                 (
-                    self.__letters[
-                        (self.__letters.find(char) - self.shift) % len(self.__letters)
+                    self.letters[
+                        (self.letters.find(char) - self.shift) % len(self.letters)
                     ]
-                    if char in self.__letters
+                    if char in self.letters
                     else char
                 )
                 for char in message

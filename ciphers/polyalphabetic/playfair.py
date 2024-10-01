@@ -1,11 +1,10 @@
-import string
+from ..base import Cipher
 
 
-class Playfair:
+class Playfair(Cipher):
     def __init__(self, passphrase: str) -> None:
-        self.__letters = (string.ascii_letters + string.digits).translate(
-            str.maketrans("", "", "jJ")
-        )
+        super().__init__()
+        self.letters = self.letters.translate(str.maketrans("", "", "jJ"))
         self.__passphrase = passphrase.replace("j", "i").replace("J", "I")
 
         self.__grid = []
@@ -13,7 +12,7 @@ class Playfair:
             if char not in self.__grid:
                 self.__grid.append(char)
 
-        for char in self.__letters:
+        for char in self.letters:
             if char not in self.__grid:
                 self.__grid.append(char)
 
@@ -82,7 +81,7 @@ class Playfair:
         while message:
             curr_char = message[0]
             part += curr_char
-            if curr_char in self.__letters:
+            if curr_char in self.letters:
                 count += 1
 
             if count == 2:
@@ -119,7 +118,7 @@ class Playfair:
         while message:
             curr_char = message[0]
             part += curr_char
-            if curr_char in self.__letters:
+            if curr_char in self.letters:
                 count += 1
 
             if count == 2:

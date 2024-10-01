@@ -1,5 +1,6 @@
 import math
-import string
+
+from ..base import Cipher
 
 
 class InvalidDeterminant(ValueError):
@@ -91,17 +92,17 @@ class ModMatrix:
         return (inverse_determinant * ModMatrix(cofactors, self.modulus)) % self.modulus
 
 
-class Hill:
+class Hill(Cipher):
     def __init__(self, key: str) -> None:
-        self.__letters = string.ascii_letters + string.digits
-        self.__key = list(map(self.__letters.find, key))
+        super().__init__()
+        self.__key = list(map(self.letters.find, key))
         self.__key_shape = int(len(self.__key) ** 0.5)
         self.__key = ModMatrix(
             [
                 self.__key[i * self.__key_shape : (i + 1) * self.__key_shape]
                 for i in range(self.__key_shape)
             ],
-            len(self.__letters),
+            len(self.letters),
         )
 
         self.__inverted_key = self.__key.invert()
@@ -127,22 +128,22 @@ class Hill:
 
     def __encode_group(self, group: str) -> str:
         vector = ModMatrix(
-            [[self.__letters.find(char)] for char in group if char in self.__letters],
-            len(self.__letters),
+            [[self.letters.find(char)] for char in group if char in self.letters],
+            len(self.letters),
         )
-        new_letters = ((self.__key @ vector) % len(self.__letters)).flatten().matrix
-        new_letters = [self.__letters[ind] for ind in new_letters]
+        new_letters = ((self.__key @ vector) % len(self.letters)).flatten().matrix
+        new_letters = [self.letters[ind] for ind in new_letters]
         return new_letters
 
     def __decode_group(self, group: str) -> str:
         vector = ModMatrix(
-            [[self.__letters.find(char)] for char in group if char in self.__letters],
-            len(self.__letters),
+            [[self.letters.find(char)] for char in group if char in self.letters],
+            len(self.letters),
         )
         new_letters = (
-            ((self.__inverted_key @ vector) % len(self.__letters)).flatten().matrix
+            ((self.__inverted_key @ vector) % len(self.letters)).flatten().matrix
         )
-        new_letters = [self.__letters[ind] for ind in new_letters]
+        new_letters = [self.letters[ind] for ind in new_letters]
         return new_letters
 
     def encode(self, message: str) -> str:
@@ -156,7 +157,7 @@ class Hill:
         while message:
             curr_char = message[0]
             part += curr_char
-            if curr_char in self.__letters:
+            if curr_char in self.letters:
                 count += 1
 
             if count == self.__key_shape:
@@ -195,7 +196,7 @@ class Hill:
         while message:
             curr_char = message[0]
             part += curr_char
-            if curr_char in self.__letters:
+            if curr_char in self.letters:
                 count += 1
 
             if count == self.__key_shape:

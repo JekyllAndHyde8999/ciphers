@@ -1,16 +1,13 @@
-import string
 from typing import List, Tuple
 
+from ..base import Cipher
 
-class Vatsyayana:
+
+class Vatsyayana(Cipher):
     def __init__(self, pairings: List[Tuple]) -> None:
         reverse_pairings = {val: key for key, val in pairings}
         self.pairings = {**dict(pairings), **reverse_pairings}
-
-    def preprocess(self, message: str) -> str:
-        message = message.replace(" ", "")
-        message = message.translate(str.maketrans("", "", string.punctuation))
-        return message
+        super().__init__()
 
     def encode(self, message: str) -> str:
         out = "".join(
