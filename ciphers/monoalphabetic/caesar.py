@@ -7,33 +7,27 @@ class Caesar(Cipher):
         super().__init__()
 
     def encode(self, message: str) -> str:
-        out = "".join(
-            [
-                (
-                    self.letters[
-                        (self.letters.find(char) + self.shift) % len(self.letters)
-                    ]
-                    if char in self.letters
-                    else char
-                )
-                for char in message
-            ]
-        )
+        message, puncts = self.separate(message)
+        out = []
+        for char in message:
+            out.append(
+                self.letters[(self.letters.find(char) + self.shift) % len(self.letters)]
+            )
 
-        return out
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
 
     def decode(self, message: str) -> str:
-        out = "".join(
-            [
-                (
-                    self.letters[
-                        (self.letters.find(char) - self.shift) % len(self.letters)
-                    ]
-                    if char in self.letters
-                    else char
-                )
-                for char in message
-            ]
-        )
+        message, puncts = self.separate(message)
+        out = []
+        for char in message:
+            out.append(
+                self.letters[(self.letters.find(char) - self.shift) % len(self.letters)]
+            )
 
-        return out
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)

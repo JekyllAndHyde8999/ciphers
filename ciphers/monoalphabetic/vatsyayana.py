@@ -10,21 +10,25 @@ class Vatsyayana(Cipher):
         super().__init__()
 
     def encode(self, message: str) -> str:
-        out = "".join(
-            [
-                self.pairings[char] if char in self.pairings.keys() else char
-                for char in message
-            ]
-        )
+        message, puncts = self.separate(message)
+        out = []
 
-        return out
+        for char in message:
+            out.append(self.pairings[char])
+        
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
 
     def decode(self, message: str) -> str:
-        out = "".join(
-            [
-                self.pairings[char] if char in self.pairings.keys() else char
-                for char in message
-            ]
-        )
+        message, puncts = self.separate(message)
+        out = []
 
-        return out
+        for char in message:
+            out.append(self.pairings[char])
+        
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)

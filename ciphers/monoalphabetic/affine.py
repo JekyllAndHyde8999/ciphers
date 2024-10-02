@@ -21,26 +21,32 @@ class Affine(Cipher):
                 break
 
     def encode(self, message: str) -> str:
-        out = ""
+        message, puncts = self.separate(message)
+        out = []
         for char in message:
-            if char in self.letters:
-                out += self.letters[
+            out.append(
+                self.letters[
                     (self.a * self.letters.find(char) + self.b) % len(self.letters)
                 ]
-            else:
-                out += char
+            )
 
-        return out
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
 
     def decode(self, message: str) -> str:
-        out = ""
+        message, puncts = self.separate(message)
+        out = []
         for char in message:
-            if char in self.letters:
-                out += self.letters[
+            out.append(
+                self.letters[
                     (self.a_inv * (self.letters.find(char) - self.b))
                     % len(self.letters)
                 ]
-            else:
-                out += char
+            )
 
-        return out
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
