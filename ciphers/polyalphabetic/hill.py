@@ -48,6 +48,25 @@ class Hill(Cipher):
         return new_letters
 
     def encode(self, message: str) -> str:
+        message, puncts = self.separate(message)
+        message = self.__preprocess("".join(message))
+        out = []
+
+        for pair in [
+            message[i : i + self.__key_shape]
+            for i in range(0, len(message), self.__key_shape)
+        ]:
+            # indices = tuple(map(self.__find_char, pair))
+            # new_indices = self.__get_new_indices(*indices)
+            encoded_group = self.__encode_group(pair)
+            out.extend(encoded_group)
+
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
+
+    def encode_dummy(self, message: str) -> str:
         message = self.__preprocess(message)
         message_parts = []
         out = []
@@ -88,6 +107,25 @@ class Hill(Cipher):
         return "".join(out)
 
     def decode(self, message: str) -> str:
+        message, puncts = self.separate(message)
+        message = self.__preprocess("".join(message))
+        out = []
+
+        for pair in [
+            message[i : i + self.__key_shape]
+            for i in range(0, len(message), self.__key_shape)
+        ]:
+            # indices = tuple(map(self.__find_char, pair))
+            # new_indices = self.__get_new_indices(*indices)
+            encoded_group = self.__decode_group(pair)
+            out.extend(encoded_group)
+
+        for punct, index in puncts:
+            out.insert(index, punct)
+        out = "".join(out)
+        return out
+
+    def decode_dummy(self, message: str) -> str:
         message_parts = []
         out = []
 

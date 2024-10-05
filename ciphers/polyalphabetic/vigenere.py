@@ -7,27 +7,29 @@ class Vigenere(Cipher):
         super().__init__()
 
     def encode(self, message: str) -> str:
-        out = ""
+        message, puncts = self.separate(message)
+        out = []
         for i, char in enumerate(message):
-            if char in self.letters:
-                delta = self.letters.find(self.key[i % len(self.key)])
-                out += self.letters[
-                    (self.letters.find(char) + delta) % len(self.letters)
-                ]
-            else:
-                out += char
+            delta = self.letters.find(self.key[i % len(self.key)])
+            out.append(
+                self.letters[(self.letters.find(char) + delta) % len(self.letters)]
+            )
 
-        return out
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
 
     def decode(self, message: str) -> str:
-        out = ""
+        message, puncts = self.separate(message)
+        out = []
         for i, char in enumerate(message):
-            if char in self.letters:
-                delta = self.letters.find(self.key[i % len(self.key)])
-                out += self.letters[
-                    (self.letters.find(char) - delta) % len(self.letters)
-                ]
-            else:
-                out += char
+            delta = self.letters.find(self.key[i % len(self.key)])
+            out.append(
+                self.letters[(self.letters.find(char) - delta) % len(self.letters)]
+            )
 
-        return out
+        for punct, index in puncts:
+            out.insert(index, punct)
+
+        return "".join(out)
