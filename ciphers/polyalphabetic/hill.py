@@ -52,57 +52,15 @@ class Hill(Cipher):
         message = self.__preprocess("".join(message))
         out = []
 
-        for pair in [
+        for group in [
             message[i : i + self.__key_shape]
             for i in range(0, len(message), self.__key_shape)
         ]:
-            # indices = tuple(map(self.__find_char, pair))
-            # new_indices = self.__get_new_indices(*indices)
-            encoded_group = self.__encode_group(pair)
+            encoded_group = self.__encode_group(group)
             out.extend(encoded_group)
 
         for punct, index in puncts:
             out.insert(index, punct)
-
-        return "".join(out)
-
-    def encode_dummy(self, message: str) -> str:
-        message = self.__preprocess(message)
-        message_parts = []
-        out = []
-
-        # take `key` alphanum chars at a time and find indices
-        count = 0
-        part = ""
-        while message:
-            curr_char = message[0]
-            part += curr_char
-            if curr_char in self.letters:
-                count += 1
-
-            if count == self.__key_shape:
-                message_parts.append(part)
-                count = 0
-                part = ""
-
-            message = message[1:]
-
-        if part:
-            message_parts.append(part)
-
-        for group in message_parts:
-            new_group = ""
-            encoded_group = (
-                self.__encode_group(group)
-                if any(map(lambda x: x.isalnum(), group))
-                else group
-            )
-            for char in group:
-                if char.isalnum():
-                    new_group += encoded_group.pop(0)
-                else:
-                    new_group += char
-            out.append(new_group)
 
         return "".join(out)
 
@@ -111,55 +69,14 @@ class Hill(Cipher):
         message = self.__preprocess("".join(message))
         out = []
 
-        for pair in [
+        for group in [
             message[i : i + self.__key_shape]
             for i in range(0, len(message), self.__key_shape)
         ]:
-            # indices = tuple(map(self.__find_char, pair))
-            # new_indices = self.__get_new_indices(*indices)
-            encoded_group = self.__decode_group(pair)
+            encoded_group = self.__decode_group(group)
             out.extend(encoded_group)
 
         for punct, index in puncts:
             out.insert(index, punct)
         out = "".join(out)
         return out
-
-    def decode_dummy(self, message: str) -> str:
-        message_parts = []
-        out = []
-
-        # take `key` alphanum chars at a time and find indices
-        count = 0
-        part = ""
-        while message:
-            curr_char = message[0]
-            part += curr_char
-            if curr_char in self.letters:
-                count += 1
-
-            if count == self.__key_shape:
-                message_parts.append(part)
-                count = 0
-                part = ""
-
-            message = message[1:]
-
-        if part:
-            message_parts.append(part)
-
-        for group in message_parts:
-            new_group = ""
-            encoded_group = (
-                self.__decode_group(group)
-                if any(map(lambda x: x.isalnum(), group))
-                else group
-            )
-            for char in group:
-                if char.isalnum():
-                    new_group += encoded_group.pop(0)
-                else:
-                    new_group += char
-            out.append(new_group)
-
-        return "".join(out)
