@@ -1,7 +1,16 @@
 import random
 import string
 
-from ciphers import Affine, Caesar, Hill, Playfair, RailFence, Vatsyayana, Vigenere
+from ciphers import (
+    Affine,
+    Caesar,
+    Hill,
+    Playfair,
+    RailFence,
+    Trithemius,
+    Vatsyayana,
+    Vigenere,
+)
 
 all_chars = string.ascii_letters + string.digits
 TOTAL_LENGTH = 100
@@ -71,3 +80,7 @@ print(f"\n{' Vigenere ':#^{TOTAL_LENGTH}}\n")
 key = "ciphers"
 vigenere = Vigenere(key)
 print_message(message, vigenere)
+
+print(f"\n{' Trithemius ':#^{TOTAL_LENGTH}}\n")
+trithemius = Trithemius()
+print_message(message, trithemius)

@@ -1,5 +1,5 @@
 from .monoalphabetic import Affine, Caesar, RailFence, Vatsyayana
-from .polyalphabetic import Hill, Playfair, Vigenere
+from .polyalphabetic import Hill, Playfair, Trithemius, Vigenere
 
 __all__ = [
     "Affine",
@@ -9,4 +9,5 @@ __all__ = [
     "Vatsyayana",
     "Vigenere",
     "RailFence",
+    "Trithemius",
 ]
