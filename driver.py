@@ -3,6 +3,7 @@ import string
 
 from ciphers import (
     Affine,
+    AutoKey,
     Caesar,
     Hill,
     Playfair,
@@ -84,3 +85,7 @@ print_message(message, vigenere)
 print(f"\n{' Trithemius ':#^{TOTAL_LENGTH}}\n")
 trithemius = Trithemius()
 print_message(message, trithemius)
+
+print(f"\n{' AutoKey ':#^{TOTAL_LENGTH}}\n")
+autokey = AutoKey("DFCH")
+print_message(message, autokey)
