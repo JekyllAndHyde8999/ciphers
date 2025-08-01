@@ -3,9 +3,9 @@ from ..base import Cipher
 
 class Trithemius(Cipher):
     def encode(self, message: str) -> str:
-        message, puncts = self.separate(message)
+        message_wo_puncts, puncts = self.separate(message)
         out = []
-        for idx, char in enumerate(message):
+        for idx, char in enumerate(message_wo_puncts):
             out.append(
                 self.letters[(self.letters.find(char) + idx) % len(self.letters)]
             )
@@ -16,9 +16,9 @@ class Trithemius(Cipher):
         return out
 
     def decode(self, message: str) -> str:
-        message, puncts = self.separate(message)
+        message_wo_puncts, puncts = self.separate(message)
         out = []
-        for idx, char in enumerate(message):
+        for idx, char in enumerate(message_wo_puncts):
             out.append(
                 self.letters[(self.letters.find(char) - idx) % len(self.letters)]
             )

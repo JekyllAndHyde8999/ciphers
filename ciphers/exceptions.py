@@ -4,3 +4,7 @@ class InvalidDeterminant(ValueError):
 
 class InvalidParameter(ValueError):
     pass
+
+
+class InvalidCharacter(ValueError):
+    pass

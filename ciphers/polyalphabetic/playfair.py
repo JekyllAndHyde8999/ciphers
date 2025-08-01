@@ -1,4 +1,5 @@
 from ..base import Cipher
+from ..exceptions import InvalidCharacter
 
 
 class Playfair(Cipher):
@@ -20,11 +21,16 @@ class Playfair(Cipher):
         self.__grid_shape = (len(self.__grid), len(self.__grid[0]))
 
     def __preprocess(self, message: str) -> str:
+        """
+        Insert X's between duplicate characters
+        and also at the end to make the length of the message even
+        """
+
         # insert X between duplicate letters
         wo_duplicates = []
-        message = list(message)
-        while message:
-            curr_char = message.pop(0)
+        message_char_list = list(message)
+        while message_char_list:
+            curr_char = message_char_list.pop(0)
             if wo_duplicates and curr_char.isalnum() and curr_char == wo_duplicates[-1]:
                 wo_duplicates.append("X")
 
@@ -45,12 +51,14 @@ class Playfair(Cipher):
                 if element == char:
                     return (row_index, col_index)
 
+        raise InvalidCharacter(f"Character `{char}` not found in grid")
+
     def __get_char(self, coords: tuple[int, int]) -> str:
         return self.__grid[coords[0]][coords[1]]
 
     def __get_new_indices(
         self, index1: tuple[int, int], index2: tuple[int, int], decode: bool = False
-    ) -> tuple[tuple[int, int]]:
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
         delta = -1 if decode else 1
 
         # same row
@@ -101,7 +109,7 @@ class Playfair(Cipher):
                 out.append(pair)
                 continue
 
-            new_indices = self.__get_new_indices(*indices)
+            new_indices = self.__get_new_indices(*indices, decode=False)
             new_chars = tuple(map(self.__get_char, new_indices))
 
             out.append(pair.translate(dict(zip(map(ord, alnum), map(ord, new_chars)))))

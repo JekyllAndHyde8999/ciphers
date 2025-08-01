@@ -21,9 +21,9 @@ class Affine(Cipher):
                 break
 
     def encode(self, message: str) -> str:
-        message, puncts = self.separate(message)
+        message_wo_puncts, puncts = self.separate(message)
         out = []
-        for char in message:
+        for char in message_wo_puncts:
             out.append(
                 self.letters[
                     (self.a * self.letters.find(char) + self.b) % len(self.letters)
@@ -36,9 +36,9 @@ class Affine(Cipher):
         return "".join(out)
 
     def decode(self, message: str) -> str:
-        message, puncts = self.separate(message)
+        message_wo_puncts, puncts = self.separate(message)
         out = []
-        for char in message:
+        for char in message_wo_puncts:
             out.append(
                 self.letters[
                     (self.a_inv * (self.letters.find(char) - self.b))

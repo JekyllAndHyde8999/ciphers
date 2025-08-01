@@ -9,11 +9,11 @@ class RailFence(Cipher):
         super().__init__()
 
     def encode(self, message: str) -> str:
-        message, puncts = self.separate(message)
+        message_wo_puncts, puncts = self.separate(message)
         out = []
 
         for i in range(self.fences):
-            out.extend(message[i :: self.fences])
+            out.extend(message_wo_puncts[i :: self.fences])
 
         for punct, index in puncts:
             out.insert(index, punct)
@@ -21,11 +21,11 @@ class RailFence(Cipher):
         return "".join(out)
 
     def decode(self, message: str) -> str:
-        message, puncts = self.separate(message)
-        split_size = math.ceil(len(message) / self.fences)
+        message_wo_puncts, puncts = self.separate(message)
+        split_size = math.ceil(len(message_wo_puncts) / self.fences)
         out = []
         for i in range(split_size):
-            out.extend(message[i::split_size])
+            out.extend(message_wo_puncts[i::split_size])
 
         for punct, index in puncts:
             out.insert(index, punct)

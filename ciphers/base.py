@@ -19,8 +19,8 @@ class Cipher:
 
         return message_wo_puncts, puncts
 
-    def encode(self, message: str = None) -> str:
+    def encode(self, message: str) -> str:
         raise NotImplementedError("Method `encode` is not implemented")
 
-    def decode(self, message: str = None) -> str:
+    def decode(self, message: str) -> str:
         raise NotImplementedError("Method `decode` is not implemented")
