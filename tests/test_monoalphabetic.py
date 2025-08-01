@@ -1,5 +1,6 @@
 import unittest
 
+from ciphers.base import Cipher
 from ciphers.exceptions import InvalidParameter
 from ciphers.monoalphabetic import Affine, Caesar, RailFence, Vatsyayana
 
@@ -10,11 +11,24 @@ class TestAffineCipher(unittest.TestCase):
         Testing encryption/decryption on message containing only alphabet
         """
 
-        affine_cipher: Affine = Affine(5, 5)
-        message: str = "Hello"
+        affine_cipher: Cipher = Affine(5, 5)
+        plain_text: str = "Hello"  # plain text message to encrypt
+        encrypted_text: str = "Uz88n"
 
-        self.assertEqual(affine_cipher.encode(message), "Uz88n")
-        self.assertEqual(affine_cipher.decode("Uz88n"), message)
+        self.assertEqual(affine_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(affine_cipher.decode(encrypted_text), plain_text)
+
+    def test_string_with_alphanum(self):
+        """
+        Testing encryption/decryption on message with alphanumeric characters
+        """
+
+        affine_cipher: Cipher = Affine(5, 5)
+        plain_text: str = "Hello123"
+        encrypted_text: str = "Uz88nwBG"
+
+        self.assertEqual(affine_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(affine_cipher.decode(encrypted_text), plain_text)
 
     def test_error_raises(self):
         """
@@ -31,11 +45,24 @@ class TestCaesarCipher(unittest.TestCase):
         Testing encryption/decryption on message containing only alphabet
         """
 
-        caesar_cipher: Caesar = Caesar(3)
-        message: str = "Hello"
+        caesar_cipher: Cipher = Caesar(3)
+        plain_text: str = "Hello"
+        encrypted_text: str = "Khoor"
 
-        self.assertEqual(caesar_cipher.encode(message), "Khoor")
-        self.assertEqual(caesar_cipher.decode("Khoor"), message)
+        self.assertEqual(caesar_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(caesar_cipher.decode(encrypted_text), plain_text)
+
+    def test_string_with_alphanum(self):
+        """
+        Testing encryption/decryption on message with alphanumeric characters
+        """
+
+        caesar_cipher: Cipher = Caesar(3)
+        plain_text: str = "Hello123"
+        encrypted_text: str = "Khoor456"
+
+        self.assertEqual(caesar_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(caesar_cipher.decode(encrypted_text), plain_text)
 
 
 class TestRailFenceCipher(unittest.TestCase):
@@ -44,10 +71,24 @@ class TestRailFenceCipher(unittest.TestCase):
         Testing encryption/decryption on message containing only alphabet
         """
 
-        railfence_cipher: RailFence = RailFence(2)
-        message: str = "Hello"
+        railfence_cipher: Cipher = RailFence(2)
+        plain_text: str = "Hello"
+        encrypted_text: str = "Hloel"
 
-        self.assertEqual(railfence_cipher.encode(message), "Hloel")
+        self.assertEqual(railfence_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(railfence_cipher.decode(encrypted_text), plain_text)
+
+    def test_string_with_alphanum(self):
+        """
+        Testing encryption/decryption on message with alphanumeric characters
+        """
+
+        railfence_cipher: Cipher = RailFence(3)
+        plain_text: str = "Hello123"
+        encrypted_text: str = "Hl2eo3l1"
+
+        self.assertEqual(railfence_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(railfence_cipher.decode(encrypted_text), plain_text)
 
     def test_error_raises(self):
         """
@@ -55,9 +96,9 @@ class TestRailFenceCipher(unittest.TestCase):
         """
 
         with self.assertRaises(InvalidParameter):
-            railfence_cipher: RailFence = RailFence(5)
-            message: str = "Hello"
-            railfence_cipher.encode(message)
+            railfence_cipher: Cipher = RailFence(5)
+            plain_text: str = "Hello"
+            railfence_cipher.encode(plain_text)
 
 
 class TestVatsyayanaCipher(unittest.TestCase):
@@ -65,7 +106,7 @@ class TestVatsyayanaCipher(unittest.TestCase):
         """
         Testing encryption/decryption on message containing only alphabet
         """
-        
+
         pairings = [
             ("E", "l"),
             ("2", "e"),
@@ -100,7 +141,9 @@ class TestVatsyayanaCipher(unittest.TestCase):
             ("K", "H"),
         ]
 
-        vatsyayana_cipher: Vatsyayana = Vatsyayana(pairings)
-        message: str = "Hello"
+        vatsyayana_cipher: Cipher = Vatsyayana(pairings)
+        plain_text: str = "Hello"
+        encrypted_text: str = "K2EEB"
 
-        self.assertEqual(vatsyayana_cipher.encode(message), "K2EEB")
+        self.assertEqual(vatsyayana_cipher.encode(plain_text), encrypted_text)
+        self.assertEqual(vatsyayana_cipher.decode(encrypted_text), plain_text)
