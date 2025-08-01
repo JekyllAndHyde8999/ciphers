@@ -1,6 +1,7 @@
 import math
 
 from ..base import Cipher
+from ..exceptions import InvalidParameter
 
 
 class RailFence(Cipher):
@@ -10,6 +11,10 @@ class RailFence(Cipher):
 
     def encode(self, message: str) -> str:
         message_wo_puncts, puncts = self.separate(message)
+        if self.fences >= len(message_wo_puncts):
+            raise InvalidParameter(
+                f"fences ({self.fences}) must be less than length of message for effective encryption"
+            )
         out = []
 
         for i in range(self.fences):

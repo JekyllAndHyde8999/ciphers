@@ -1,10 +1,10 @@
-from typing import List, Tuple
+from typing import Sequence
 
 from ..base import Cipher
 
 
 class Vatsyayana(Cipher):
-    def __init__(self, pairings: List[Tuple]) -> None:
+    def __init__(self, pairings: Sequence[tuple[str, str]]) -> None:
         reverse_pairings = {val: key for key, val in pairings}
         self.pairings = {**dict(pairings), **reverse_pairings}
         super().__init__()
@@ -15,7 +15,7 @@ class Vatsyayana(Cipher):
 
         for char in message_wo_puncts:
             out.append(self.pairings[char])
-        
+
         for punct, index in puncts:
             out.insert(index, punct)
 
@@ -27,7 +27,7 @@ class Vatsyayana(Cipher):
 
         for char in message_wo_puncts:
             out.append(self.pairings[char])
-        
+
         for punct, index in puncts:
             out.insert(index, punct)
 

@@ -12,7 +12,7 @@ class Affine(Cipher):
 
         if math.gcd(self.a, len(self.letters)) != 1:
             raise InvalidParameter(
-                f"Parameter `a`({self.a}) must be co-prime with {len(self.letters)}"
+                f"Parameter `a`({self.a}) must be co-prime with vocabulary size ({len(self.letters)})"
             )
 
         for i in range(1, len(self.letters)):
