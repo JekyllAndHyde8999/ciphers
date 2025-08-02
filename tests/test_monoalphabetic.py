@@ -192,7 +192,7 @@ class TestVatsyayanaCipher(unittest.TestCase):
             ("Z", "8"),
             ("i", "r"),
             ("t", "W"),
-            ("g", "W"), # `W` repeated here
+            ("g", "W"),  # `W` repeated here
             ("3", "4"),
             ("k", "F"),
             ("5", "V"),
