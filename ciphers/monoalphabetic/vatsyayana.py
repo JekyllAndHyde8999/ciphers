@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from ..base import Cipher
-from ..exceptions import ErrorCategory, InvalidPairings
+from ..exceptions import InvalidPairings
 
 
 class Vatsyayana(Cipher):
@@ -17,31 +17,31 @@ class Vatsyayana(Cipher):
 
     def validate_pairings(
         self, pairings: Sequence[tuple[str, str]]
-    ) -> tuple[bool, ErrorCategory]:
+    ) -> tuple[bool, InvalidPairings.ErrorCategory]:
         seen = set()
 
         for pair in pairings:
             if not isinstance(pair, (list, tuple)) or len(pair) != 2:
-                return False, ErrorCategory.NOT_A_PAIR
+                return False, InvalidPairings.ErrorCategory.NOT_A_PAIR
 
             a, b = pair
 
             if a == b:
                 # character cannnot be mapped to itself
-                return False, ErrorCategory.SELF_PAIRING
+                return False, InvalidPairings.ErrorCategory.SELF_PAIRING
 
             if a in seen or b in seen:
                 # characters cannot be repeated in pairings
-                return False, ErrorCategory.REPEATED_CHARS
+                return False, InvalidPairings.ErrorCategory.REPEATED_CHARS
 
             seen.update([a, b])
 
         # all characters must be used
         remaining_chars = set(self.letters) - seen
         if len(remaining_chars):  # if there are characters left
-            return False, ErrorCategory.NOT_ALL_CHARS_PAIRED
+            return False, InvalidPairings.ErrorCategory.NOT_ALL_CHARS_PAIRED
         else:
-            return True, ErrorCategory.NO_ERROR
+            return True, InvalidPairings.ErrorCategory.NO_ERROR
 
     def encode(self, message: str) -> str:
         message_wo_puncts, puncts = self.separate(message)
