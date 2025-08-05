@@ -1,7 +1,8 @@
 import string
+from abc import ABC, abstractmethod
 
 
-class Cipher:
+class Cipher(ABC):
     def __init__(self) -> None:
         self.letters = string.ascii_letters + string.digits
 
@@ -19,8 +20,8 @@ class Cipher:
 
         return message_wo_puncts, puncts
 
-    def encode(self, message: str) -> str:
-        raise NotImplementedError("Method `encode` is not implemented")
+    @abstractmethod
+    def encode(self, message: str) -> str: ...
 
-    def decode(self, message: str) -> str:
-        raise NotImplementedError("Method `decode` is not implemented")
+    @abstractmethod
+    def decode(self, message: str) -> str: ...
