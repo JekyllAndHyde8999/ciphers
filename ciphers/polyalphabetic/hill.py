@@ -1,12 +1,20 @@
+import math
+
 from ..base import Cipher
+from ..exceptions import InvalidKeyLength
 from ..utils import ModMatrix
 
 
 class Hill(Cipher):
     def __init__(self, key: str) -> None:
         super().__init__()
+
+        # check if length of key is perfect square
+        if math.isqrt(len(key)) ** 2 != len(key):
+            raise InvalidKeyLength("Length of key must be a perfect square")
+
         self.__key_chars = list(map(self.letters.find, key))
-        self.__key_shape = int(len(self.__key_chars) ** 0.5)
+        self.__key_shape = math.isqrt(len(self.__key_chars))
         self.__key = ModMatrix(
             [
                 self.__key_chars[i * self.__key_shape : (i + 1) * self.__key_shape]
@@ -83,4 +91,4 @@ class Hill(Cipher):
         for punct, index in puncts:
             out.insert(index, punct)
         out = "".join(out)
-        return out
+        return out.strip("X")

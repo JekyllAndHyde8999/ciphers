@@ -13,6 +13,10 @@ class InvalidCharacter(ValueError):
     pass
 
 
+class InvalidKeyLength(ValueError):
+    pass
+
+
 class InvalidPairings(ValueError):
     class ErrorCategory(Enum):
         SELF_PAIRING = "character mapped to itself"

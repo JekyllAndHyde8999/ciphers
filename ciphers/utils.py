@@ -35,7 +35,9 @@ class ModMatrix:
     def flatten(self):
         return ModMatrix([ele for row in self.matrix for ele in row], self.modulus)
 
-    def __get_matrix_minor(self, matrix, i, j):
+    def __get_matrix_minor(
+        self, matrix: list[list[int]], i: int, j: int
+    ) -> list[list[int]]:
         return [row[:j] + row[j + 1 :] for row in (matrix[:i] + matrix[i + 1 :])]
 
     def __get_determinant(self, matrix):
@@ -54,11 +56,15 @@ class ModMatrix:
             )
         return determinant
 
-    def __invert_det(self, det):
-        if det == 0:
-            raise InvalidDeterminant("Determinant of matrix is 0.")
+    def __repr__(self) -> str:
+        return str(self.matrix)
 
-        det %= self.modulus
+    def __str__(self) -> str:
+        return str(self.matrix)
+
+    def __invert_det(self, det: int) -> int | None:
+        if det == 0:
+            raise InvalidDeterminant("Determinant of matrix cannot be 0.")
 
         if math.gcd(det, self.modulus) != 1:
             raise InvalidDeterminant(
@@ -73,6 +79,10 @@ class ModMatrix:
         """Function to calculate the inverse of a matrix"""
         inverse_determinant = self.__invert_det(self.__get_determinant(self.matrix))
 
+        # handle special case for 1x1 matrices
+        if len(self.matrix) == 1:
+            return ModMatrix([[inverse_determinant]], self.modulus)
+
         # Find matrix of cofactors
         cofactors = []
         for r in range(len(self.matrix)):
@@ -83,6 +93,6 @@ class ModMatrix:
             cofactors.append(cofactor_row)
 
         # Transpose matrix of cofactors
-        cofactors = list(map(list, zip(*cofactors)))
+        adjoint = list(map(list, zip(*cofactors)))
 
-        return (inverse_determinant * ModMatrix(cofactors, self.modulus)) % self.modulus
+        return (inverse_determinant * ModMatrix(adjoint, self.modulus)) % self.modulus
