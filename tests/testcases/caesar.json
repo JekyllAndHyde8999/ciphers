@@ -1,0 +1,46 @@
+{
+    "test_encrypt_decrypt": [
+        {
+            "plain_text": "Hello",
+            "encrypted_text": "Mjqqt",
+            "params": {
+                "shift": 5
+            }
+        },
+        {
+            "plain_text": "Some sample text",
+            "encrypted_text": "Zvtl zhtwsl AlEA",
+            "params": {
+                "shift": 7
+            }
+        },
+        {
+            "plain_text": "Another piece of text",
+            "encrypted_text": "JwxCqnA yrnln xo CnGC",
+            "params": {
+                "shift": 9
+            }
+        },
+        {
+            "plain_text": "There are 40 characters in this sentence",
+            "encrypted_text": "4spCp lCp fb nslClnEpCD ty EstD DpyEpynp",
+            "params": {
+                "shift": 11
+            }
+        },
+        {
+            "plain_text": "This is some sample text with a period at the end.",
+            "encrypted_text": "8wxH xH HDBt HpBEAt ItMI LxIw p EtGxDs pI Iwt tCs.",
+            "params": {
+                "shift": 15
+            }
+        },
+        {
+            "plain_text": "This is some sample text with a period at the end.",
+            "encrypted_text": "8wxH xH HDBt HpBEAt ItMI LxIw p EtGxDs pI Iwt tCs.",
+            "params": {
+                "shift": 77
+            }
+        }
+    ]
+}

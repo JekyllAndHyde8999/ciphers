@@ -1,4 +1,7 @@
+import json
 import unittest
+from pathlib import Path
+from typing import Any
 
 from ciphers.base import Cipher
 from ciphers.exceptions import InvalidParameter
@@ -6,34 +9,37 @@ from ciphers.monoalphabetic import Affine
 
 
 class TestAffineCipher(unittest.TestCase):
-    def test_simple_string(self):
-        """
-        Testing encryption/decryption on message containing only alphabet
-        """
+    testcases_file: str = "affine.json"
 
-        affine_cipher: Cipher = Affine(5, 5)
-        plain_text: str = "Hello"  # plain text message to encrypt
-        encrypted_text: str = "Uz88n"
+    @classmethod
+    def setUpClass(cls) -> None:
+        testcases_path: Path = (
+            Path(__file__).parent.parent / "testcases" / cls.testcases_file
+        )
+        with open(testcases_path, mode="r") as f:
+            cls.testcases = json.load(f)
 
-        self.assertEqual(affine_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(affine_cipher.decode(encrypted_text), plain_text)
-
-    def test_string_with_alphanum(self):
+    def test_encrypt_decrypt(self):
         """
-        Testing encryption/decryption on message with alphanumeric characters
+        Testing encryption/decryption on plain text
         """
 
-        affine_cipher: Cipher = Affine(5, 5)
-        plain_text: str = "Hello123"
-        encrypted_text: str = "Uz88nwBG"
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                plain_text: str = case["plain_text"]
+                encrypted_text: str = case["encrypted_text"]
+                cipher: Cipher = Affine(**case["params"])
 
-        self.assertEqual(affine_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(affine_cipher.decode(encrypted_text), plain_text)
+                self.assertEqual(encrypted_text, cipher.encode(plain_text))
+                self.assertEqual(plain_text, cipher.decode(encrypted_text))
 
     def test_error_raises(self):
         """
         `a` parameter must be co-prime with vocabulary size (currently 62)
         """
-
-        with self.assertRaises(InvalidParameter):
-            Affine(4, 10)
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                with self.assertRaises(InvalidParameter):
+                    Affine(**case["params"])

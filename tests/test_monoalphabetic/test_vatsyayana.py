@@ -1,4 +1,7 @@
+import json
 import unittest
+from pathlib import Path
+from typing import Any
 
 from ciphers.base import Cipher
 from ciphers.exceptions import InvalidPairings
@@ -6,125 +9,40 @@ from ciphers.monoalphabetic import Vatsyayana
 
 
 class TestVatsyayanaCipher(unittest.TestCase):
-    def test_simple_string(self):
+    testcases_file: str = "vatsyayana.json"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        testcases_path: Path = (
+            Path(__file__).parent.parent / "testcases" / cls.testcases_file
+        )
+        with open(testcases_path, mode="r") as f:
+            cls.testcases = json.load(f)
+
+    def test_encrypt_decrypt(self):
         """
-        Testing encryption/decryption on message containing only alphabet
+        Testing encryption/decryption on plain text
         """
 
-        pairings = [
-            ("E", "l"),
-            ("2", "e"),
-            ("Z", "8"),
-            ("i", "r"),
-            ("t", "W"),
-            ("g", "6"),
-            ("3", "4"),
-            ("k", "F"),
-            ("5", "V"),
-            ("d", "n"),
-            ("v", "X"),
-            ("C", "S"),
-            ("G", "9"),
-            ("T", "c"),
-            ("N", "R"),
-            ("f", "L"),
-            ("u", "m"),
-            ("M", "b"),
-            ("x", "j"),
-            ("A", "D"),
-            ("I", "Y"),
-            ("q", "p"),
-            ("w", "7"),
-            ("h", "0"),
-            ("a", "P"),
-            ("y", "s"),
-            ("O", "Q"),
-            ("J", "z"),
-            ("o", "B"),
-            ("U", "1"),
-            ("K", "H"),
-        ]
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                plain_text: str = case["plain_text"]
+                encrypted_text: str = case["encrypted_text"]
+                cipher: Cipher = Vatsyayana(**case["params"])
 
-        vatsyayana_cipher: Cipher = Vatsyayana(pairings)
-        plain_text: str = "Hello"
-        encrypted_text: str = "K2EEB"
+                self.assertEqual(encrypted_text, cipher.encode(plain_text))
+                self.assertEqual(plain_text, cipher.decode(encrypted_text))
 
-        self.assertEqual(vatsyayana_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(vatsyayana_cipher.decode(encrypted_text), plain_text)
-
-    def test_invalid_pairings_partial_pairings(self):
+    def test_error_raises(self):
         """
         Test configuring Vatsyayana cipher with invalid pairings
         """
 
-        pairings = [
-            ("E", "l"),
-            ("2", "e"),
-            ("Z", "8"),
-            ("i", "r"),
-            ("t", "W"),
-            ("g", "6"),
-            ("3", "4"),
-            ("k", "F"),
-            ("5", "V"),
-            ("d", "n"),
-            ("v", "X"),
-            ("C", "S"),
-            ("G", "9"),
-            ("T", "c"),
-            ("N", "R"),
-            ("f", "L"),
-            ("u", "m"),
-            ("M", "b"),
-            ("x", "j"),
-            ("A", "D"),
-        ]
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                with self.assertRaises(InvalidPairings) as context:
+                    Vatsyayana(**case["params"])
 
-        with self.assertRaises(InvalidPairings) as context:
-            Vatsyayana(pairings)
-
-        self.assertIn("not all characters", str(context.exception))
-
-    def test_invalid_pairings_repeated_chars(self):
-        """
-        Test configuring Vatsyayana cipher with invalid pairings
-        """
-
-        pairings = [
-            ("E", "l"),
-            ("2", "e"),
-            ("Z", "8"),
-            ("i", "r"),
-            ("t", "W"),
-            ("g", "W"),  # `W` repeated here
-            ("3", "4"),
-            ("k", "F"),
-            ("5", "V"),
-            ("d", "n"),
-            ("v", "X"),
-            ("C", "S"),
-            ("G", "9"),
-            ("T", "c"),
-            ("N", "R"),
-            ("f", "L"),
-            ("u", "m"),
-            ("M", "b"),
-            ("x", "j"),
-            ("A", "D"),
-            ("I", "Y"),
-            ("q", "p"),
-            ("w", "7"),
-            ("h", "0"),
-            ("a", "P"),
-            ("y", "s"),
-            ("O", "Q"),
-            ("J", "z"),
-            ("o", "B"),
-            ("U", "1"),
-            ("K", "H"),
-        ]
-
-        with self.assertRaises(InvalidPairings) as context:
-            Vatsyayana(pairings)
-
-        self.assertIn("used more than once", str(context.exception))
+                self.assertIn(case["partial_message"], str(context.exception))

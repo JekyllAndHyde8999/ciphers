@@ -1,0 +1,46 @@
+{
+    "test_encrypt_decrypt": [
+        {
+            "plain_text": "Hello",
+            "encrypted_text": "ZinCs",
+            "params": {
+                "key": "secret"
+            }
+        },
+        {
+            "plain_text": "Some sample text",
+            "encrypted_text": "ASOV WTWT9W XGeX",
+            "params": {
+                "key": "SECRETKEY"
+            }
+        },
+        {
+            "plain_text": "Another piece of text",
+            "encrypted_text": "KrMDlCB tGogC yj RoBR",
+            "params": {
+                "key": "key"
+            }
+        },
+        {
+            "plain_text": "There are 40 characters in this sentence",
+            "encrypted_text": "blgIi tBi si gjrvtmxCJw kE xAsw Qwrvvrvo",
+            "params": {
+                "key": "secretkey"
+            }
+        },
+        {
+            "plain_text": "This is some sample text with a period at the end.",
+            "encrypted_text": "tL62 Mg 2SaO WYWT9O X27X kSX5 K T21McN Eh 3L2 OR1.",
+            "params": {
+                "key": "KEY"
+            }
+        },
+        {
+            "plain_text": "This is some sample text with a period at the end.",
+            "encrypted_text": "nUK9 67 bW0R WNO69T cMb6 0VVY Y 4XZW1H NV a5T XVR.",
+            "params": {
+                "key": "ENCRYPTION"
+            }
+        }
+    ]
+}

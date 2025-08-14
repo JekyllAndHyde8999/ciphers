@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Any
 
 from ciphers.base import Cipher
-from ciphers.polyalphabetic import AutoKey
+from ciphers.polyalphabetic import Trithemius
 
 
-class TestAutoKeyCipher(unittest.TestCase):
-    testcases_file: str = "autokey.json"
+class TestVigenereCipher(unittest.TestCase):
+    testcases_file: str = "trithemius.json"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -20,7 +20,7 @@ class TestAutoKeyCipher(unittest.TestCase):
 
     def test_encrypt_decrypt(self):
         """
-        Testing encryption/decryption on message containing only alphabet
+        Testing encryption/decryption on plain text
         """
 
         curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
@@ -28,7 +28,7 @@ class TestAutoKeyCipher(unittest.TestCase):
             with self.subTest():
                 plain_text: str = case["plain_text"]
                 encrypted_text: str = case["encrypted_text"]
-                cipher: Cipher = AutoKey(**case["params"])
+                cipher: Cipher = Trithemius()
 
                 self.assertEqual(encrypted_text, cipher.encode(plain_text))
                 self.assertEqual(plain_text, cipher.decode(encrypted_text))

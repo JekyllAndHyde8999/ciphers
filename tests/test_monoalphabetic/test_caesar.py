@@ -1,30 +1,34 @@
+import json
 import unittest
+from pathlib import Path
+from typing import Any
 
 from ciphers.base import Cipher
 from ciphers.monoalphabetic import Caesar
 
 
 class TestCaesarCipher(unittest.TestCase):
-    def test_simple_string(self):
-        """
-        Testing encryption/decryption on message containing only alphabet
-        """
+    testcases_file: str = "caesar.json"
 
-        caesar_cipher: Cipher = Caesar(3)
-        plain_text: str = "Hello"
-        encrypted_text: str = "Khoor"
+    @classmethod
+    def setUpClass(cls) -> None:
+        testcases_path: Path = (
+            Path(__file__).parent.parent / "testcases" / cls.testcases_file
+        )
+        with open(testcases_path, mode="r") as f:
+            cls.testcases = json.load(f)
 
-        self.assertEqual(caesar_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(caesar_cipher.decode(encrypted_text), plain_text)
-
-    def test_string_with_alphanum(self):
+    def test_encrypt_decrypt(self):
         """
-        Testing encryption/decryption on message with alphanumeric characters
+        Testing encryption/decryption on plain text
         """
 
-        caesar_cipher: Cipher = Caesar(3)
-        plain_text: str = "Hello123"
-        encrypted_text: str = "Khoor456"
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                plain_text: str = case["plain_text"]
+                encrypted_text: str = case["encrypted_text"]
+                cipher: Cipher = Caesar(**case["params"])
 
-        self.assertEqual(caesar_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(caesar_cipher.decode(encrypted_text), plain_text)
+                self.assertEqual(encrypted_text, cipher.encode(plain_text))
+                self.assertEqual(plain_text, cipher.decode(encrypted_text))
