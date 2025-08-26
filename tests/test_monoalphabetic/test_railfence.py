@@ -1,4 +1,7 @@
+import json
 import unittest
+from pathlib import Path
+from typing import Any
 
 from ciphers.base import Cipher
 from ciphers.exceptions import InvalidParameter
@@ -6,36 +9,39 @@ from ciphers.monoalphabetic import RailFence
 
 
 class TestRailFenceCipher(unittest.TestCase):
-    def test_simple_string(self):
-        """
-        Testing encryption/decryption on message containing only alphabet
-        """
+    testcases_file: str = "railfence.json"
 
-        railfence_cipher: Cipher = RailFence(2)
-        plain_text: str = "Hello"
-        encrypted_text: str = "Hloel"
+    @classmethod
+    def setUpClass(cls) -> None:
+        testcases_path: Path = (
+            Path(__file__).parent.parent / "testcases" / cls.testcases_file
+        )
+        with open(testcases_path, mode="r") as f:
+            cls.testcases = json.load(f)
 
-        self.assertEqual(railfence_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(railfence_cipher.decode(encrypted_text), plain_text)
-
-    def test_string_with_alphanum(self):
+    def test_encrypt_decrypt(self):
         """
-        Testing encryption/decryption on message with alphanumeric characters
+        Testing encryption/decryption on plain text
         """
 
-        railfence_cipher: Cipher = RailFence(3)
-        plain_text: str = "Hello123"
-        encrypted_text: str = "Hl2eo3l1"
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                plain_text: str = case["plain_text"]
+                encrypted_text: str = case["encrypted_text"]
+                cipher: Cipher = RailFence(**case["params"])
 
-        self.assertEqual(railfence_cipher.encode(plain_text), encrypted_text)
-        self.assertEqual(railfence_cipher.decode(encrypted_text), plain_text)
+                self.assertEqual(encrypted_text, cipher.encode(plain_text))
+                self.assertEqual(plain_text, cipher.decode(encrypted_text))
 
     def test_error_raises(self):
         """
         `fences` parameter being greater than length of message is unreasonable
         """
-
-        with self.assertRaises(InvalidParameter):
-            railfence_cipher: Cipher = RailFence(5)
-            plain_text: str = "Hello"
-            railfence_cipher.encode(plain_text)
+        curr_testcases: list[dict[str, Any]] = self.testcases[self._testMethodName]
+        for case in curr_testcases:
+            with self.subTest():
+                with self.assertRaises(InvalidParameter):
+                    plain_text: str = case["plain_text"]
+                    railfence_cipher: Cipher = RailFence(**case["params"])
+                    railfence_cipher.encode(plain_text)

@@ -1,0 +1,47 @@
+{
+    "test_encrypt_decrypt": [
+        {
+            "plain_text": "Hello",
+            "encrypted_text": "Hloel",
+            "params": {
+                "fences": 2
+            }
+        },
+        {
+            "plain_text": "Some sample text",
+            "encrypted_text": "Spol meetse axmt",
+            "params": {
+                "fences": 7
+            }
+        },
+        {
+            "plain_text": "Another piece of text",
+            "encrypted_text": "Aencoet ohfet re pxit",
+            "params": {
+                "fences": 9
+            }
+        },
+        {
+            "plain_text": "There are 40 characters in this sentence",
+            "encrypted_text": "Tacci seh rh tnsneeaete cr 4rrh nee0asit",
+            "params": {
+                "fences": 5
+            }
+        },
+        {
+            "plain_text": "This is some sample text with a period at the end.",
+            "encrypted_text": "Tswd ha iaim ttspht ilah sepe s teeoer nm xid eto.",
+            "params": {
+                "fences": 15
+            }
+        }
+    ],
+    "test_error_raises": [
+        {
+            "plain_text": "This is some sample text with a period at the end.",
+            "params": {
+                "fences": 77
+            }
+        }
+    ]
+}
